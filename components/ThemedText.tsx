@@ -10,7 +10,7 @@ type Props = TextProps & {
   color?: Color;
 };
 
-export default function ThemedText({ variant, color, ...rest }: Props) {
+export default function ThemedText({ variant, color, style, ...rest }: Props) {
   const colors = useThemeColors();
 
   return (
@@ -19,6 +19,7 @@ export default function ThemedText({ variant, color, ...rest }: Props) {
       style={[
         { color: colors[color ?? "grayDark"] },
         styles[variant ?? "body3"],
+        style
       ]}
     />
   );
