@@ -1,22 +1,24 @@
 import Card from "@/components/Card";
 import PokemonCard from "@/components/PokemonCard";
 import ThemedText from "@/components/ThemedText";
+import { useInfiniteFetchQuery } from "@/hooks/useFetchQuery";
 import useThemeColors from "@/hooks/useThemeColors";
-import { FlatList, Image, StyleSheet, View } from "react-native";
+import { getPokemonId } from "@/utils/pokemons";
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  StyleSheet,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const colors = useThemeColors();
 
-  const pokemons = Array.from({ length: 35 }, (_, i) => {
-    return {
-      id: i + 1,
-      name: `Pokemon ${i + 1}`,
-      image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${
-        i + 1
-      }.png`,
-    };
-  });
+  const { data, isFetching, fetchNextPage } =
+    useInfiniteFetchQuery("/pokemon?limit=21");
+  const pokemons = data?.pages.flatMap((page) => page.results) ?? [];
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.tint }]}>
@@ -36,10 +38,15 @@ export default function Index() {
           numColumns={3}
           columnWrapperStyle={styles.gridGap}
           contentContainerStyle={[styles.gridGap, styles.list]}
+          ListFooterComponent={isFetching ? <ActivityIndicator /> : null}
+          showsVerticalScrollIndicator={false}
+          onEndReached={() => fetchNextPage()}
           renderItem={({ item }) => {
+            item.id = getPokemonId(item.url);
+
             return <PokemonCard style={{ flex: 1 / 3 }} pokemon={item} />;
           }}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item.url}
         />
       </Card>
     </SafeAreaView>

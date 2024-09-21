@@ -8,14 +8,10 @@ type Props = {
   pokemon: {
     id: number;
     name: string;
-    image: string;
   };
 };
 
-export default function PokemonCard({
-  style,
-  pokemon: { id, name, image },
-}: Props) {
+export default function PokemonCard({ style, pokemon: { id, name } }: Props) {
   const colors = useThemeColors();
 
   return (
@@ -28,7 +24,7 @@ export default function PokemonCard({
       </ThemedText>
       <Image
         source={{
-          uri: image,
+          uri: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
         }}
         width={72}
         height={72}
